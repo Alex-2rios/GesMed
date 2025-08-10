@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GESMED - Médicod</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> 
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/modalMedi.css') }}"> 
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/modalPaci.css') }}"> 
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/modalRece.css') }}"> 
+  <script src="https://kit.fontawesome.com/yourkit.js" crossorigin="anonymous"></script>
+  
+</head>
+<body style="background-image: url('{{ url_for('static', filename='resours/img/black.png') }}');">
+<header>
+  <div class="header">
+    <div class="header-left">
+      <div class="welcome"> 
+       <h2 style="color: white;">Hola! Bienvenido, <span class="nameMedico">{{ nombre_medico }}</span></h2>
+      </div>      
+    </div>
+
+<div class="header-right" style="position: relative; display: flex; align-items: center;">
+ 
+  <img src="{{ url_for('static', filename='resours/users/user.png') }}" class="avatar" id="profile-avatar" draggable="false">
+
+
+<div class="user-info">
+  <span class="tag medico">{{ rol }}</span>
+  <span class="user-name">{{ nombre_medico }}</span>
+</div>
+
+
+<div id="dropdown-menu">
+  <div class="dropdown-item">
+    <span class="dropdown-icon"></span>
+    <label class="dropdown-label">Modo Oscuro</label>
+    <input type="checkbox" id="dark-toggle" />
+  </div>
+  <div class="dropdown-item clickable" onclick="cerrarSesion()">
+    <span class="dropdown-icon"></span>
+    <label class="dropdown-label">Cerrar sesión</label>
+  </div>
+</div>
+
+    </div>
+
+    <div class="logo-section">
+      <img src="{{ url_for('static', filename='resours/img/GEStionMEDica.webp') }}" alt="Logo" class="logo" draggable="false">
+    </div>
+  </div>
+</header>
+
+
+  <section class="welcome">
+    
+<div class="cards">
+<div class="card">
+  <p class="cardnormal">Total de <br><strong class="cardpacientess">Pacientes</strong></p>
+  <p class="cardbold">{{ total_pacientes }}<img src="{{ url_for('static', filename='resours/icon/usuario-lesionado.svg') }}" alt="icono" class="iconoCard"></p>
+</div>
+
+  <section class="menu-buttons">
+
+  <button id="btn-pacientes" class="btn" data-target="pacientes">
+    <div class="circle"></div>
+    <div class="circlewhite"></div>
+    <div class="iconblue"><img src="{{ url_for('static', filename='resours/icon/usuario-del-portapapeles.svg') }}" class="iconblue"></div>
+    <p class="letraBtn">Pacientes</p>
+  </button>
+
+  <button id="btn-citas" class="btn" data-target="citas">
+    <div class="circle"></div>
+    <div class="circlewhite"></div>
+    <div class="iconblue"><img src="{{ url_for('static', filename='resours/icon/doc.png') }}" class="iconblue"></div>
+    <p class="letraBtn">Citas</p>
+  </button>
+</section>
+</div>
+
+  </section>
+
+
+
+
+<section class="table-section">
+  <!-- Tabla Médicos -->
+  <div class="tabla" id="tabla-medicos"style="display: none;">
+ <div class="table-header">
+      <h3>Médicos</h3>
+      <input type="text" placeholder=" Buscar Médicos" class="search-input" />
+      <button class="add-btn" id="abrir-modal-medico"> Agregar Médico</button>
+    </div>
+
+    <table class="doctor-table">
+  
+    </table>
+  </div>
+
+  <!-- Tabla Pacientes -->
+  <div class="tabla" id="tabla-pacientes" style="display:none;">
+    <div class="table-header">
+      <h3>Pacientes</h3>
+      <input type="text" placeholder="Buscar Paciente" class="search-input"/>
+      <button class="add-btn" id="abrir-modal-paciente">Agregar Paciente</button>
+    </div>
+    <table class="doctor-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Apellido Paterno</th>
+          <th>Apellido Materno</th>
+          <th>Fecha de Nacimiento</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for paciente in pacientes %}
+        <tr>
+          <td>{{ paciente[2] }}</td>
+          <td>{{ paciente[3] }}</td>
+          <td>{{ paciente[4] }}</td>
+          <td>{{ paciente[5].strftime('%Y-%m-%d') }}</td>
+          <td>
+              <!--BOTONES-->
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+
+<!-- Tabla Citas -->
+<div class="tabla" id="tabla-citas" style="display:none;">
+  <div class="table-header">
+    <h3>Citas</h3>
+    <input type="text" placeholder="Buscar Cita" class="search-input"/>
+    <button class="add-btn" id="btnAgregarCita">Agregar Cita</button>
+  </div>
+
+  <table class="doctor-table">
+    <thead>
+      <tr>
+        <th>Paciente</th>
+        <th>Fecha</th>
+        <th>Médico</th>
+        <th>PDF</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cita in citas %}
+      <tr>
+        <td>{{ cita['Nombre_Paciente'] }} {{ cita['AP_Paciente'] }} {{ cita['AM_Paciente'] }}</td>
+        <td>{{ cita['Fecha'].strftime('%Y-%m-%d') }}</td>
+        <td>Dr. {{ cita['Nombre_Medico'] }} {{ cita['AP_Medico'] }} {{ cita['AM_Medico'] }}</td>
+        <td>
+          <a href="{{ url_for('ver_pdf', id=cita['ID_Cita']) }}" target="_blank" class="pdf-btn">📄 Ver PDF</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+</section>
+
+<!-- Modal Agregar Médico -->
+<div class="modal" id="modal-medico" onclick="closeModalOutside(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+
+    <form method="POST" action="{{ url_for('agregar_medico') }}" enctype="multipart/form-data">
+      <div class="form-grid">
+        <div class="form-header">
+          <div class="modal-header">
+            <div>
+              <h1>Registro</h1>
+              <h2>Expediente del Médico</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-image-upload" id="image-upload">
+          <label for="file-input" class="upload-area">
+            <span id="preview-text">Haz clic para subir una imagen</span>
+            <img id="preview-img" src="" alt="Vista previa" style="display: none;" />
+          </label>
+          <input type="file" id="file-input" name="imagen_medico" accept="image/*" style="display: none;" />
+        </div>
+
+        <div class="form-group nombre">
+          <label>Nombre:</label>
+          <input type="text" name="nombre" required />
+        </div>
+        <div class="form-group apellido-paterno">
+          <label>Apellido paterno:</label>
+          <input type="text" name="apellido_paterno" required />
+        </div>
+        <div class="form-group apellido-materno">
+          <label>Apellido materno:</label>
+          <input type="text" name="apellido_materno" required />
+        </div>
+        <div class="form-group cedula">
+          <label>Cédula Profesional:</label>
+          <input type="text" name="cedula" required />
+        </div>
+        <div class="form-group correo">
+          <label>Correo:</label>
+          <input type="email" name="correo" required />
+        </div>
+        <div class="form-group contrasena">
+          <label>Contraseña:</label>
+          <input type="password" name="contrasena" required />
+        </div>
+        <div class="form-group verif-contrasena">
+          <label>Verificar contraseña:</label>
+          <input type="password" name="verif_contrasena" required />
+        </div>
+        <div class="form-group rfc">
+          <label>RFC:</label>
+          <input type="text" name="rfc" required />
+        </div>
+        <div class="form-group roles">
+          <label><input type="radio" name="rol" value="admin" required /> Médico Admin</label>
+          <label><input type="radio" name="rol" value="medico" required /> Médico</label>
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <button type="reset" class="btn-clear">Limpiar</button>
+        <button type="submit" class="btn-save">Guardar</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+
+<!-- MODAL PACIENTE -->
+<div class="modalpaciente" id="modalRegistro">
+  <div class="modalpaciente-content">
+    <div class="modalpaciente-header">
+      <div>
+        <h1>Registro</h1>
+        <h2>Expediente del Paciente</h2>
+      </div>
+      <button class="close-btn" onclick="cerrarModalPaciente()">×</button>
+    </div>
+
+    <form class="form-gridPaciente" method="POST" action="/agregar_paciente">
+      <div class="full-width">
+        <label>Nombre del Médico</label>
+        <input type="text" name="medico_nombre" placeholder="Dr Maru Hermosa" />
+      </div>
+
+      <div>
+        <label>Nombre del Paciente</label>
+        <input type="text" name="nombre" placeholder="Carlos" />
+      </div>
+
+      <div>
+        <label>Apellido Paterno</label>
+        <input type="text" name="apellido_paterno" placeholder="Ramírez" />
+      </div>
+
+      <div>
+        <label>Apellido Materno</label>
+        <input type="text" name="apellido_materno" placeholder="Torres" />
+      </div>
+
+      <div>
+        <label>Fecha de Nacimiento</label>
+        <input type="date" name="fecha_nacimiento" placeholder="23/05/2000" />
+      </div>
+
+      <div>
+        <label>Alergias</label>
+        <input type="text" name="alergias" placeholder="Penicilina" />
+      </div>
+
+      <div class="full-width">
+        <label>Antecedentes Familiares</label>
+        <textarea name="antecedentes_familiares" rows="2" placeholder="Padre con diabetes"></textarea>
+      </div>
+
+      <div class="full-width">
+        <label>Enfermedades Crónicas</label>
+        <textarea name="enfermedades_cronicas" rows="4" placeholder="Hipertensión"></textarea>
+      </div>
+
+      <div class="buttons">
+        <button type="reset" class="btn-clear">Limpiar</button>
+        <button type="submit" class="btn-save">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+  <script>
+const btnAbrir = document.getElementById('btnAgregarCita');
+const modal = document.getElementById('modalrecetas');
+const btnCerrar = document.getElementById('cerrarModal');
+
+btnAbrir.addEventListener('click', () => {
+  modal.classList.add('modal-active');  
+});
+
+btnCerrar.addEventListener('click', () => {
+  modal.classList.remove('modal-active'); 
+});
+
+window.addEventListener('click', (e) => {
+  if (e.target === modal) {
+    modal.classList.remove('modal-active'); 
+  }
+});
+
+
+  </script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script src="{{ url_for('static', filename='js/controlador.js') }}"></script>
+
+
+</body>
+</html>

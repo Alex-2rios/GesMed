@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GESMED - Admin</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> 
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/modalMedi.css') }}"> 
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/modalPaci.css') }}"> 
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/modalRece.css') }}"> 
+
+  <script src="https://kit.fontawesome.com/yourkit.js" crossorigin="anonymous"></script>
+
+
+</head>
+<body style="background-image: url('{{ url_for('static', filename='resours/img/blackadmin.png') }}');">
+<header>
+  <div class="header">
+    <div class="header-left">
+      <div class="welcome"> 
+       <h2 style="color: white;">Hola! Bienvenido, <span class="nameAdmin">{{ nombre_medico }}</span></h2>
+      </div>
+      
+    </div>
+
+<div class="header-right" style="position: relative; display: flex; align-items: center;">
+ 
+  <img src="{{ url_for('static', filename='resours/users/Perfil.png') }}" class="avatar" id="profile-avatar" draggable="false">
+
+<div class="user-info">
+  <span class="tag admin">{{ rol }}</span>
+  <span class="user-name">{{ nombre_medico }}</span>
+</div>
+
+
+
+<div id="dropdown-menu">
+  <div class="dropdown-item">
+    <span class="dropdown-icon"></span>
+    <label class="dropdown-label">Modo Oscuro</label>
+    <input type="checkbox" id="dark-toggle" />
+  </div>
+  <div class="dropdown-item clickable" onclick="cerrarSesionU()">
+    <span class="dropdown-icon"></span>
+    <label class="dropdown-label">Cerrar sesión</label>
+  </div>
+</div>
+
+    </div>
+
+    <div class="logo-section">
+            <img src="{{ url_for('static', filename='resours/img/GESMED.webp') }}" alt="Logo" class="logo" />
+    </div>
+  </div>
+</header>
+
+
+
+<section class="welcome">
+
+</section>
+
+
+<section class="menu-buttons">
+      <div class="cards">
+    <div class="card">
+      <p class="cardnormal">Total de <br><strong class="cardmedicos">Médicos</strong></p>
+      <p class="cardbold">{{ total_medicos }}<img src="{{ url_for('static', filename='resours/icon/doctor.svg') }}" alt="icono" class="iconoCard"></p>
+    </div>
+    <div class="card">
+      <p class="cardnormal">Total de <br><strong class="cardadmins">Admins</strong></p>
+      <p class="cardbold">{{ total_admins }}<img src="{{ url_for('static', filename='resours/icon/usuario-del-hospital.svg') }}" alt="icono" class="iconoCard"></p>
+    </div>
+    <div class="card">
+      <p class="cardnormal">Total de <br><strong class="cardpacientess">Pacientes</strong></p>
+      <p class="cardbold">{{ total_pacientes }}<img src="{{ url_for('static', filename='resours/icon/usuario-lesionado.svg') }}" alt="icono" class="iconoCard"></p>
+    </div>
+  </div>
+  
+  <button id="btn-medicos" class="btn selected" data-target="medicos">
+    <div class="circle"></div>
+    <div class="circlewhite"></div>
+    <div class="iconblue"><img src="{{ url_for('static', filename='resours/icon/estetoscopio.svg') }}" class="iconblue"></div>
+    <p class="letraBtn">Médicos</p>
+  </button>
+
+  <button id="btn-pacientes" class="btn" data-target="pacientes">
+    <div class="circle"></div>
+    <div class="circlewhite"></div>
+    <div class="iconblue"><img src="{{ url_for('static', filename='resours/icon/usuario-del-portapapeles.svg') }}" class="iconblue"></div>
+    <p class="letraBtn">Pacientes</p>
+  </button>
+
+  <button id="btn-citas" class="btn" data-target="citas">
+    <div class="circle"></div>
+    <div class="circlewhite"></div>
+    <div class="iconblue"><img src="{{ url_for('static', filename='resours/icon/doc.png') }}" class="iconblue"></div>
+    <p class="letraBtn">Citas</p>
+  </button>
+
+
+</section>
+
+<section class="table-section">
+
+<!-- Tabla Médicos -->
+<div class="tabla" id="tabla-medicos">
+  <div class="table-header">
+    <h3>Médicos</h3>
+    <input type="text" placeholder="Buscar Médicos" class="search-input" />
+    <button class="add-btn" id="abrir-modal-medico">Agregar Médico</button>
+  </div>
+  <table class="doctor-table">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>RFC</th>
+        <th>Cédula</th>
+        <th>Correo</th>
+        <th>Rol</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for medico in medicos %}
+      <tr>
+        <td><div class="avatar"></div> Dr. {{ medico[1] }}</td>
+        <td>{{ medico[5] }}</td>
+        <td>{{ medico[6] }}</td>
+        <td>{{ medico[7] }}</td>
+        <td>
+          {% if medico[8] == 'admin' %}
+            <span class="tag admin">Médico Admin</span>
+          {% else %}
+            <span class="tag">Médico</span>
+          {% endif %}
+        </td>
+        <td>
+          <button class="btn-accion btn-ver" onclick="openModal('modal-ver-{{ medico[0] }}')">Ver</button>
+          <button onclick="openModal('modal-actualizar-{{ medico[0] }}')" class="btn-accion btn-actualizar">Actualizar</button>
+          <button class="btn-accion btn-eliminar" onclick="abrirModalEliminar('{{ medico[0] }}', '{{ medico[1] }} {{ medico[2] }}')">Eliminar</button>
+        </td>
+      </tr>
+
+<!-- Modal Ver Médico -->
+<div class="modal" id="modal-ver-{{ medico[0] }}" onclick="CerrarOutside(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <button class="btn-close" onclick="Cerrar('modal-ver-{{ medico[0] }}')" aria-label="Cerrar modal">✖</button>
+    <h2 class="modal-title">Detalle del Médico</h2>
+    <div class="modal-body">
+      <p><strong>Nombre:</strong> Dr. {{ medico[1] }}</p>
+      <p><strong>RFC:</strong> {{ medico[5] }}</p>
+      <p><strong>Cédula:</strong> {{ medico[6] }}</p>
+      <p><strong>Correo:</strong> {{ medico[7] }}</p>
+      <p><strong>Rol:</strong> {% if medico[8] == 'admin' %}<span class="rol-admin">Médico Admin</span>{% else %}<span class="rol-normal">Médico</span>{% endif %}</p>
+    </div>
+  </div>
+</div>
+
+
+
+
+      <!-- Modal Actualizar Médico -->
+<div class="modal" id="modal-actualizar-{{ medico[0] }}" onclick="CerrarOutside(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <button class="btn-close" onclick="Cerrar('modal-actualizar-{{ medico[0] }}')">✖</button>
+
+    <form method="POST" action="{{ url_for('actualizar_medico', id=medico[0]) }}">
+      <div class="form-grid">
+        <div class="form-header">
+          <div class="modal-header">
+            <div>
+              <h1>Actualizar Médico</h1>
+              <h2>Editar expediente</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group nombre">
+          <label>Nombre:</label>
+          <input type="text" name="nombre" value="{{ medico[2] }}"  />
+        </div>
+        <div class="form-group apellido-paterno">
+          <label>Apellido paterno:</label>
+          <input type="text" name="apellido_paterno" value="{{ medico[3] }}"  />
+        </div>
+        <div class="form-group apellido-materno">
+          <label>Apellido materno:</label>
+          <input type="text" name="apellido_materno" value="{{ medico[4] }}"  />
+        </div>
+        <div class="form-group rfc">
+          <label>RFC:</label>
+          <input type="text" name="rfc" value="{{ medico[5] }}"  />
+        </div>
+        <div class="form-group cedula">
+          <label>Cédula Profesional:</label>
+          <input type="text" name="cedula" value="{{ medico[6] }}"  />
+        </div>
+        <div class="form-group correo">
+          <label>Correo:</label>
+          <input type="email" name="correo" value="{{ medico[7] }}"  />
+        </div>
+        <div class="form-group roles">
+          <label><input type="radio" name="rol" value="admin" {% if medico[8] == 'admin' %}checked{% endif %}  /> Médico Admin</label>
+          <label><input type="radio" name="rol" value="medico" {% if medico[8] == 'medico' %}checked{% endif %}  /> Médico</label>
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <button type="reset" class="btn-clear">Limpiar</button>
+        <button type="submit" class="btn-save">Actualizar</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+<!-- Tabla Pacientes -->
+<div class="tabla" id="tabla-pacientes" style="display:none;">
+  <div class="table-header">
+    <h3>Pacientes</h3>
+    <input type="text" placeholder="Buscar Paciente" class="search-input"/>
+    <button class="add-btn" id="abrir-modal-paciente">Agregar Paciente</button>
+  </div>
+
+  <table class="doctor-table">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Apellido Paterno</th>
+        <th>Apellido Materno</th>
+        <th>Edad</th>
+        <th>Médico Asignado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for paciente in pacientes %}
+      <tr>
+        <td>{{ paciente[1] }}</td>
+        <td>{{ paciente[2] }}</td>
+        <td>{{ paciente[3] }}</td>
+        <td>{{ paciente[5] }} años</td>
+        <td>Dr. {{ paciente[6] }} {{ paciente[6] }} {{ paciente[7] }}</td>
+        <td>
+          <button class="btn-accion btn-ver" onclick="verPaciente('modal-ver-paciente-{{ paciente[0] }}')">Ver</button>
+          <button class="btn-accion btn-actualizar" onclick="verPaciente('modal-actualizar-paciente-{{ paciente[0] }}')">Actualizar</button>
+          <button class="btn-accion btn-eliminar" onclick="abrirModalEliminarPaciente('{{ paciente[0] }}', '{{ paciente[1] }} {{ paciente[2] }}')">Eliminar</button>
+        </td>
+      </tr>
+
+      <!-- Modal Ver Paciente -->
+      <div class="modal" id="modal-ver-paciente-{{ paciente[0] }}" onclick="CerrarModalOutside(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+          <button class="btn-close" onclick="Cerrar('modal-ver-paciente-{{ paciente[0] }}')" aria-label="Cerrar modal">✖</button>
+          <h2 class="modal-title">Detalle del Paciente</h2>
+          <div class="modal-body">
+            <p><strong>Nombre:</strong> {{ paciente[1] }} {{ paciente[2] }} {{ paciente[3] }}</p>
+            <p><strong>Edad:</strong> {{ paciente[5] }} años</p>
+            <p><strong>Médico Asignado:</strong> Dr. {{ paciente[6] }} {{ paciente[7] }} {{ paciente[8] }}</p>
+            <p><strong>Enfermedades Crónicas:</strong> {{ paciente[9] }}</p>
+            <p><strong>Alergias:</strong> {{ paciente[10] }}</p>
+            <p><strong>Antecedentes Familiares:</strong> {{ paciente[11] }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Actualizar Paciente -->
+<!-- Modal Actualizar Paciente -->
+<div class="modalpaciente" id="modal-actualizar-paciente-{{ paciente[0] }}" onclick="CerrarModalOutside(event)">
+  <div class="modalpaciente-content" onclick="event.stopPropagation()">
+    <div class="modalpaciente-header">
+      <div>
+        <h1>Actualizar</h1>
+        <h2>Expediente del Paciente</h2>
+      </div>
+      <button class="close-btn" onclick="Cerrar('modal-actualizar-paciente-{{ paciente[0] }}')">×</button>
+    </div>
+
+    <form method="POST" action="{{ url_for('actualizar_paciente', id=paciente[0]) }}" class="form-gridPaciente">
+      <div>
+        <label>Nombre del Paciente</label>
+        <input type="text" name="nombre" value="{{ paciente[1]}}"  />
+      </div>
+
+      <div>
+        <label>Apellido Paterno</label>
+        <input type="text" name="apellido_paterno" value="{{ paciente[2] }}"  />
+      </div>
+
+      <div>
+        <label>Apellido Materno</label>
+        <input type="text" name="apellido_materno" value="{{ paciente[3]}}"  />
+      </div>
+
+      <div>
+        <label>Fecha de Nacimiento</label>
+        <input type="date" name="fecha_nacimiento" value="{{ paciente[4].strftime('%Y-%m-%d') }}"  />
+      </div>
+
+      <div class="full-width">
+        <label>Alergias</label>
+        <input type="text" name="alergias" value="{{ paciente[8] }}" />
+      </div>
+
+      <div class="full-width">
+        <label>Antecedentes Familiares</label>
+        <textarea name="antecedentes_familiares" rows="2">{{ paciente[9] }}</textarea>
+      </div>
+
+      <div class="full-width">
+        <label>Enfermedades Crónicas</label>
+        <textarea name="enfermedades_cronicas" rows="4">{{ paciente[10] }}</textarea>
+      </div>
+
+      <div class="buttons">
+        <button type="reset" class="btn-clear">Limpiar</button>
+        <button type="submit" class="btn-save">Actualizar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+
+<!-- Tabla Citas -->
+<div class="tabla" id="tabla-citas" style="display:none;">
+  <div class="table-header">
+    <h3>Citas</h3>
+    <input type="text" placeholder="Buscar Cita" class="search-input"/>
+    <button class="add-btn" id="btnAgregarCita">Agregar Cita</button>
+  </div>
+
+  <table class="doctor-table">
+    <thead>
+      <tr>
+        <th>Paciente</th>
+        <th>Fecha</th>
+        <th>Médico</th>
+        <th>PDF</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cita in citas %}
+      <tr>
+        <td>{{ cita['Nombre_Paciente'] }} {{ cita['AP_Paciente'] }} {{ cita['AM_Paciente'] }}</td>
+        <td>{{ cita['Fecha'].strftime('%Y-%m-%d') }}</td>
+        <td>Dr. {{ cita['Nombre_Medico'] }} {{ cita['AP_Medico'] }} {{ cita['AM_Medico'] }}</td>
+        <td>
+        <a href="{{ url_for('ver_pdf', id=cita['ID_Cita']) }}" target="_blank" class="pdf-btn">📄 Ver PDF</a>
+        </td>
+        <td>
+        <button class="btn-accion btn-eliminar" 
+                onclick="abrirModalEliminarCita('{{ cita['ID_Cita'] }}', '{{ cita['Nombre_Paciente'] }}')">
+          Eliminar
+        </button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+</section>
+
+<!-- Modal Agregar Médico -->
+<div class="modal" id="modal-medico" onclick="closeModalOutside(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+
+    <form method="POST" action="{{ url_for('agregar_medico') }}">
+      <div class="form-grid">
+        <div class="form-header">
+          <div class="modal-header">
+            <div>
+              <h1>Registro</h1>
+              <h2>Expediente del Médico</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group nombre">
+          <label>Nombre:</label>
+          <input type="text" name="nombre"  />
+        </div>
+        <div class="form-group apellido-paterno">
+          <label>Apellido paterno:</label>
+          <input type="text" name="apellido_paterno"  />
+        </div>
+        <div class="form-group apellido-materno">
+          <label>Apellido materno:</label>
+          <input type="text" name="apellido_materno"  />
+        </div>
+        <div class="form-group cedula">
+          <label>Cédula Profesional:</label>
+          <input type="text" name="cedula"  />
+        </div>
+        <div class="form-group correo">
+          <label>Correo:</label>
+          <input type="email" name="correo"  />
+        </div>
+        <div class="form-group contrasena">
+          <label>Contraseña:</label>
+          <input type="password" name="contrasena"  />
+        </div>
+        <div class="form-group verif-contrasena">
+          <label>Verificar contraseña:</label>
+          <input type="password" name="verif_contrasena"  />
+        </div>
+        <div class="form-group rfc">
+          <label>RFC:</label>
+          <input type="text" name="rfc"  />
+        </div>
+        <div class="form-group roles">
+          <label><input type="radio" name="rol" value="admin"  /> Médico Admin</label>
+          <label><input type="radio" name="rol" value="medico"  /> Médico</label>
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <button type="reset" class="btn-clear">Limpiar</button>
+        <button type="submit" class="btn-save">Guardar</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+
+<!-- MODAL PACIENTE -->
+<div class="modalpaciente" id="modalRegistro">
+  <div class="modalpaciente-content">
+    <div class="modalpaciente-header">
+      <div>
+        <h1>Registro</h1>
+        <h2>Expediente del Paciente</h2>
+      </div>
+      <button class="close-btn" onclick="cerrarModalPaciente()">×</button>
+    </div>
+
+    <form class="form-gridPaciente" method="POST" action="/agregar_paciente">
+      <div class="full-width">
+        <label>Nombre del Médico</label>
+        <input type="text" name="medico_nombre" placeholder="{{ nombre_medico }}" />
+      </div>
+
+      <div>
+        <label>Nombre del Paciente</label>
+        <input type="text" name="nombre" placeholder="Carlos" />
+      </div>
+
+      <div>
+        <label>Apellido Paterno</label>
+        <input type="text" name="apellido_paterno" placeholder="Ramírez" />
+      </div>
+
+      <div>
+        <label>Apellido Materno</label>
+        <input type="text" name="apellido_materno" placeholder="Torres" />
+      </div>
+
+      <div>
+        <label>Fecha de Nacimiento</label>
+        <input type="date" name="fecha_nacimiento" placeholder="23/05/2000" />
+      </div>
+
+      <div>
+        <label>Alergias</label>
+        <input type="text" name="alergias" placeholder="Ninguna" />
+      </div>
+
+      <div class="full-width">
+        <label>Antecedentes Familiares</label>
+        <textarea name="antecedentes_familiares" rows="2" placeholder="Ninguna"></textarea>
+      </div>
+
+      <div class="full-width">
+        <label>Enfermedades Crónicas</label>
+        <textarea name="enfermedades_cronicas" rows="4" placeholder="Ninguna"></textarea>
+      </div>
+
+      <div class="buttons">
+        <button type="reset" class="btn-clear">Limpiar</button>
+        <button type="submit" class="btn-save">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- Modal Agregar Cita-->
+<div id="modalrecetas" class="modalrecetas">
+  <form class="modal-content" method="POST" action="{{ url_for('agregar_cita') }}">
+    <span class="close-btn" id="cerrarModal">&times;</span>
+
+    <!-- Imagen dentro del modal-content -->
+    <div class="image-container">
+      <img src="{{ url_for('static', filename='resours/img/GEStionMEDica.webp') }}" alt="Paciente" />
+    </div>
+
+    <!-- Doctora y Fecha -->
+    <div class="form-row space-between align-center">
+<div class="form-group doctor-info">
+  <label>Doctora</label>
+  <select name="id_medico" required>
+    <option value="">Selecciona una doctora</option>
+    {% for medico in medicos %}
+      <option value="{{ medico[0] }}">{{ medico[1] }}</option>
+    {% endfor %}
+  </select>
+</div>
+
+      <div class="fecha-derecha">
+        <label class="fecha-label">Fecha</label>
+        <input type="date" name="fecha" value="2025-06-01"  />
+      </div>
+    </div>
+
+<!-- Paciente (select en lugar de input) -->
+<div class="form-row">
+  <div class="form-group full">
+    <label>Paciente</label>
+    <select name="id_paciente" required>
+      <option value="">Selecciona un paciente</option>
+      {% for paciente in pacientes %}
+        <option value="{{ paciente[0] }}">{{ paciente[1] }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
+
+    <!-- Datos del paciente y síntomas -->
+    <div class="form-row">
+      <div class="form-group third">
+        <label>Altura</label>
+        <div class="input-unit">
+          <input type="text" name="altura" value="1.76"  /> <span>m</span>
+        </div>
+
+        <label>Peso</label>
+        <div class="input-unit">
+          <input type="text" name="peso" value="72.0"  /> <span>Kg</span>
+        </div>
+
+        <label>Edad</label>
+        <div class="input-unit">
+          <input type="text" name="edad" value="25"  /> <span>años</span>
+        </div>
+
+        <label>Glucosa</label>
+        <div class="input-unit">
+          <input type="text" name="glucosa" value="105" /> <span>mg/dl</span>
+        </div>
+      </div>
+
+      <div class="form-group third">
+        <label>Temperatura</label>
+        <div class="input-unit">
+          <input type="text" name="temperatura" value="37.1" /> <span>°C</span>
+        </div>
+
+        <label>Latidos por minuto</label>
+        <div class="input-unit">
+          <input type="text" name="latidos" value="78" /> <span>bpm</span>
+        </div>
+
+        <label>Saturación de oxígeno</label>
+        <div class="input-unit">
+          <input type="text" name="saturacion" value="96" /> <span>%</span>
+        </div>
+      </div>
+
+      <div class="form-group third">
+        <label>Síntomas</label>
+        <textarea name="sintomas">Dolor de cabeza, mareo</textarea>
+
+        <label>Tratamiento</label>
+        <textarea name="tratamiento">Paracetamol 500 mg cada 8h</textarea>
+      </div>
+    </div>
+
+    <!-- Diagnóstico y estudios -->
+    <div class="form-row">
+      <div class="form-group half">
+        <label>Diagnóstico</label>
+        <textarea name="diagnostico">Migraña</textarea>
+      </div>
+      <div class="form-group half">
+        <label>Estudios solicitados</label>
+        <textarea name="estudios">Tomografía en caso de persistencia</textarea>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="buttons">
+      <button type="reset" class="btn-clear">Limpiar</button>
+      <button type="submit" class="btn-save" onclick="this.form.submit();">Guardar</button>
+    </div>
+  </form>
+</div>
+
+
+<!-- Modal Eliminar Médico -->
+<div id="modalEliminar" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h4>¿Estás seguro?</h4>
+    <p id="textoConfirmacion"></p>
+    <form id="formEliminar" method="POST">
+      <input type="hidden" name="id_medico" id="idMedicoEliminar">
+      <div class="modal-buttons">
+        <button type="button" class="btn-cancelar" onclick="cerrarModalEliminar()">Cancelar</button>
+        <button type="submit" class="btn-confirmar">Eliminar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Eliminar Paciente -->
+<div id="modalEliminarPaciente" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h4>¿Estás seguro?</h4>
+    <p id="textoEliminarPaciente"></p>
+    <form id="formEliminarPaciente" method="POST">
+      <input type="hidden" name="id_paciente" id="idPacienteEliminar">
+      <div class="modal-buttons">
+        <button type="button" class="btn-cancelar" onclick="cerrarModalEliminarPaciente()">Cancelar</button>
+        <button type="submit" class="btn-confirmar">Eliminar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Eliminar Cita -->
+<div id="modalEliminarCita" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h4>¿Estás seguro?</h4>
+    <p id="textoEliminarCita"></p>
+    <form id="formEliminarCita" method="POST">
+      <input type="hidden" name="id_cita" id="idCitaEliminar">
+      <div class="modal-buttons">
+        <button type="button" class="btn-cancelar" onclick="cerrarModalEliminarCita()">Cancelar</button>
+        <button type="submit" class="btn-confirmar">Eliminar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+<!-- Modal de éxito al guardar receta -->
+<div id="modalExito" class="modalexito" style="display: none;">
+  <div class="modalexito-content">
+    <div class="circle-exito">
+      <span class="checkmark">✔</span>
+    </div>
+    <h2>Receta<br>Guardada con éxito!</h2>
+    <button id="btnGenerarPDF" class="btn-pdf">Generar PDF</button>
+  </div>
+</div>
+
+
+
+<script>
+  function abrirModalEliminar(id, nombre) {
+    document.getElementById("idMedicoEliminar").value = id;
+    document.getElementById("textoConfirmacion").innerText = `¿Estás seguro de eliminar al Dr. ${nombre}?`;
+    document.getElementById("modalEliminar").style.display = "block";
+    document.getElementById("formEliminar").action = `/eliminar_medico/${id}`;
+  }
+
+  function cerrarModalEliminar() {
+    document.getElementById("modalEliminar").style.display = "none";
+  }
+
+
+
+</script>
+
+
+<script>
+  // PACIENTE
+  function abrirModalEliminarPaciente(id, nombre) {
+    document.getElementById("idPacienteEliminar").value = id;
+    document.getElementById("textoEliminarPaciente").innerText = `¿Eliminar al paciente ${nombre}?`;
+    document.getElementById("formEliminarPaciente").action = `/eliminar_paciente/${id}`;
+    document.getElementById("modalEliminarPaciente").style.display = "block";
+  }
+
+  function cerrarModalEliminarPaciente() {
+    document.getElementById("modalEliminarPaciente").style.display = "none";
+  }
+
+  // CITA
+function abrirModalEliminarCita(id, nombrePaciente) {
+  document.getElementById("idCitaEliminar").value = id;
+  document.getElementById("textoEliminarCita").innerText = `¿Eliminar la cita del paciente ${nombrePaciente}?`;
+  document.getElementById("formEliminarCita").action = `/eliminar_cita/${id}`;
+  document.getElementById("modalEliminarCita").style.display = "block";
+}
+
+function cerrarModalEliminarCita() {
+  document.getElementById("modalEliminarCita").style.display = "none";
+}
+
+
+  // Opcional: placeholders
+  function verPaciente(id) { alert("Ver paciente: " + id); }
+  function actualizarPaciente(id) { alert("Actualizar paciente: " + id); }
+
+  function verCita(id) { alert("Ver cita: " + id); }
+  function actualizarCita(id) { alert("Actualizar cita: " + id); }
+</script>
+
+
+  <script>
+const btnAbrir = document.getElementById('btnAgregarCita');
+const modal = document.getElementById('modalrecetas');
+const btnCerrar = document.getElementById('cerrarModal');
+
+btnAbrir.addEventListener('click', () => {
+  modal.classList.add('modal-active');  
+});
+
+btnCerrar.addEventListener('click', () => {
+  modal.classList.remove('modal-active'); 
+});
+
+window.addEventListener('click', (e) => {
+  if (e.target === modal) {
+    modal.classList.remove('modal-active'); 
+  }
+});
+
+function openModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.classList.add('modal-active');
+    modal.style.display = 'flex';
+  }
+}
+
+function Cerrar(id) {
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.classList.remove('modal-active');
+    modal.style.display = 'none';
+  }
+}
+
+function CerrarOutside(event) {
+  if (event.target.classList.contains('modal')) {
+    event.target.classList.remove('modal-active');
+    event.target.style.display = 'none';
+  }
+}
+
+
+function verPaciente(id) {
+  document.getElementById(id).style.display = 'flex';
+}
+
+function Cerrar(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+function CerrarModalOutside(event) {
+  if (event.target.classList.contains('modalpaciente')) {
+    event.target.style.display = 'none';
+  }
+}
+
+
+  </script>
+<script src="{{ url_for('static', filename='js/controlador.js') }}"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+
+
+</body>
+</html>

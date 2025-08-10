@@ -1,0 +1,129 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+      background-color: #f3f3f3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      width: 800px;
+      height: 500px;
+      background-color: #ECF3F8;
+      border-radius: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      display: flex;
+      overflow: hidden;
+    }
+
+    .left-side {
+      width: 50%;
+      background-color: #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .left-side img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .right-side {
+      width: 50%;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .logo {
+      width: 120px;
+      height: 90px;
+      margin-bottom: 0px;
+    }
+
+    .form-group {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+     .right-side h2 {
+     margin-bottom: 0px;
+     color: #333;
+     text-align: center;
+     top: 0;
+     font-family: 'Montserrat', sans-serif;
+     font-style:bold;
+     font-size: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #aaa;
+      border-radius: 15px;
+      border-color: #4199FD;
+      font-size: 18px;
+    }
+
+    .forgot-password {
+      color: #4199FD;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .forgot-password:hover {
+      color: #FFA95E;
+      text-decoration: underline;
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 10px;
+      font-size:15px;
+      background-color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      color: white;
+      background-image: linear-gradient(to right, #4199FD, #4199FD);
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    input:focus {
+    border: 1px solid #FFE187; 
+    outline: none;   
+    border: 1px solid #FFE187;     
+    } 
+
+    .login-button:hover {
+      opacity: 0.9;
+      background-image: linear-gradient(to right, #FFA95E, #FFA95E);
+      border: 0px solid #FFA95E;
+      box-shadow:
+    0 0 0px #FFA95E,
+    0 0 5px #FFA95E,
+    0 0 10px #FFA95E,
+    0 0 30px #FFA95E; 
+    }

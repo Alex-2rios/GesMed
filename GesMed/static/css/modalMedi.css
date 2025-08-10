@@ -1,0 +1,202 @@
+    * {
+      box-sizing: border-box;
+    }
+body {
+  font-family: 'Montserrat', sans-serif;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h1 {
+      margin: 0;
+      font-size: 26px;
+      text-align: left;
+    }
+
+    .modal-header h2 {
+      color: #ffa856;
+      font-size: 20px;
+      margin: 0;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 900px;
+      position: relative;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .form-header {
+      grid-column: span 4;
+      text-align: center;
+      font-weight: bold;
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .form-image-upload {
+      grid-column: 1;
+      grid-row: 2 / span 3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nombre           { grid-column: 2; grid-row: 2; }
+    .apellido-paterno { grid-column: 3; grid-row: 2; }
+    .apellido-materno { grid-column: 4; grid-row: 2; }
+    .cedula           { grid-column: 2; grid-row: 3; }
+    .correo           { grid-column: 3 / span 2; grid-row: 3; }
+    .contrasena       { grid-column: 2; grid-row: 4; }
+    .verif-contrasena { grid-column: 3; grid-row: 4; }
+    .rfc              { grid-column: 4; grid-row: 4; }
+    .roles            {
+      grid-column: 2 / span 3;
+      grid-row: 5;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+    }
+
+    label {
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+.modal .form-gridPaciente input[type="text"],
+.modal .form-gridPaciente input[type="email"],
+.modal .form-gridPaciente input[type="password"] {
+  padding: 6px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.modal input{
+   border: 1px solid #2e90f7;
+  border-radius: 12px;
+  padding: 6px;
+}
+.modal input:focus{
+    outline: none;   
+    border: 1px solid #FFE187;   
+}
+
+
+    .modal-buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .modal-buttons button {
+      padding: 10px 25px;
+      font-size: 14px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .btn-clear {
+  background: linear-gradient(to right, #ffc371, #ffb347);
+  padding: 10px 25px;
+  border: none;
+  margin-right: 15px;
+  color: white;
+  cursor: pointer;
+    }
+
+    .btn-save {
+  background: linear-gradient(to right, #36d1dc, #5b86e5);
+  padding: 10px 25px;
+  border: none;
+  color: white;
+  cursor: pointer;
+    }
+
+    .upload-area {
+      border: 2px dashed #aaa;
+      border-radius: 8px;
+      padding: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.3s;
+      width: 120px;
+      height: 120px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .upload-area:hover {
+      border-color: #4caf50;
+      background-color: #f9f9f9;
+    }
+
+    .upload-area img {
+      max-width: 100%;
+      max-height: 100px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-top: 4px;
+    }
+
+    #preview-text {
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .form-image-upload {
+        grid-column: span 2;
+        grid-row: auto;
+      }
+
+      .form-group {
+        grid-column: span 2 !important;
+      }
+    }
