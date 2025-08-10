@@ -165,7 +165,7 @@
   <div class="modal-content" onclick="event.stopPropagation()">
     <button class="btn-close" onclick="Cerrar('modal-actualizar-{{ medico[0] }}')">✖</button>
 
-    <form method="POST" action="{{ url_for('actualizar_medico', id=medico[0]) }}">
+    <form method="POST" action="{{ url_for('main.actualizar_medico', id=medico[0]) }}">
       <div class="form-grid">
         <div class="form-header">
           <div class="modal-header">
@@ -284,7 +284,7 @@
       <button class="close-btn" onclick="Cerrar('modal-actualizar-paciente-{{ paciente[0] }}')">×</button>
     </div>
 
-    <form method="POST" action="{{ url_for('actualizar_paciente', id=paciente[0]) }}" class="form-gridPaciente">
+    <form method="POST" action="{{ url_for('main.actualizar_paciente', id=paciente[0]) }}" class="form-gridPaciente">
       <div>
         <label>Nombre del Paciente</label>
         <input type="text" name="nombre" value="{{ paciente[1]}}"  />
@@ -360,7 +360,7 @@
         <td>{{ cita['Fecha'].strftime('%Y-%m-%d') }}</td>
         <td>Dr. {{ cita['Nombre_Medico'] }} {{ cita['AP_Medico'] }} {{ cita['AM_Medico'] }}</td>
         <td>
-        <a href="{{ url_for('ver_pdf', id=cita['ID_Cita']) }}" target="_blank" class="pdf-btn">📄 Ver PDF</a>
+        <a href="{{ url_for('main.ver_pdf', id=cita['ID_Cita']) }}" target="_blank" class="pdf-btn">📄 Ver PDF</a>
         </td>
         <td>
         <button class="btn-accion btn-eliminar" 
@@ -383,7 +383,7 @@
 
     <span class="close-btn" onclick="closeModal()">&times;</span>
 
-    <form method="POST" action="{{ url_for('agregar_medico') }}">
+    <form method="POST" action="{{ url_for('main.agregar_medico') }}">
       <div class="form-grid">
         <div class="form-header">
           <div class="modal-header">
@@ -453,7 +453,7 @@
       <button class="close-btn" onclick="cerrarModalPaciente()">×</button>
     </div>
 
-    <form class="form-gridPaciente" method="POST" action="/agregar_paciente">
+  <form class="form-gridPaciente" method="POST" action="{{ url_for('main.agregar_paciente') }}">
       <div class="full-width">
         <label>Nombre del Médico</label>
         <input type="text" name="medico_nombre" placeholder="{{ nombre_medico }}" />
@@ -505,7 +505,7 @@
 
 <!-- Modal Agregar Cita-->
 <div id="modalrecetas" class="modalrecetas">
-  <form class="modal-content" method="POST" action="{{ url_for('agregar_cita') }}">
+  <form class="modal-content" method="POST" action="{{ url_for('main.agregar_cita') }}">
     <span class="close-btn" id="cerrarModal">&times;</span>
 
     <!-- Imagen dentro del modal-content -->

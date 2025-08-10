@@ -155,7 +155,7 @@
         <td>{{ cita['Fecha'].strftime('%Y-%m-%d') }}</td>
         <td>Dr. {{ cita['Nombre_Medico'] }} {{ cita['AP_Medico'] }} {{ cita['AM_Medico'] }}</td>
         <td>
-          <a href="{{ url_for('ver_pdf', id=cita['ID_Cita']) }}" target="_blank" class="pdf-btn">📄 Ver PDF</a>
+        <a href="{{ url_for('main.ver_pdf', id=cita['ID_Cita']) }}" target="_blank" class="pdf-btn">📄 Ver PDF</a>
         </td>
       </tr>
       {% endfor %}
@@ -171,7 +171,7 @@
 
     <span class="close-btn" onclick="closeModal()">&times;</span>
 
-    <form method="POST" action="{{ url_for('agregar_medico') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ url_for('main.agregar_medico') }}" enctype="multipart/form-data">
       <div class="form-grid">
         <div class="form-header">
           <div class="modal-header">
@@ -249,7 +249,7 @@
       <button class="close-btn" onclick="cerrarModalPaciente()">×</button>
     </div>
 
-    <form class="form-gridPaciente" method="POST" action="/agregar_paciente">
+    <form class="form-gridPaciente" method="POST" action="{{ url_for('main.agregar_paciente') }}">
       <div class="full-width">
         <label>Nombre del Médico</label>
         <input type="text" name="medico_nombre" placeholder="Dr Maru Hermosa" />

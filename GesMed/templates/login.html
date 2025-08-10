@@ -22,7 +22,7 @@
     <!-- Formulario -->
  <!-- Reemplaza la parte del formulario con esto -->
 
-<form method="POST" action="/login" class="right-side">
+<form method="POST" action="{{ url_for('main.login') }}" class="right-side">
   <img src="{{ url_for('static', filename='resours/img/GESMED.webp') }}" alt="Logo" class="logo" />
   <h2>GESMED</h2>
 
