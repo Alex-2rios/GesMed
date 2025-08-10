@@ -9,6 +9,7 @@ from flask import (
     Response,
 )
 from io import BytesIO
+from datetime import datetime, date
 from xhtml2pdf import pisa
 
 from models.mainModel import (
@@ -38,8 +39,11 @@ mainBP = Blueprint('main', __name__)
 @mainBP.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        rfc = request.form.get('rfc')
-        password = request.form.get('password')
+        rfc = request.form.get('rfc', '').strip()
+        password = request.form.get('password', '').strip()
+        if not rfc or not password:
+            flash('Es necesario llenar todos los campos en rojo', 'error')
+            return render_template('login.html')
         user = get_user_by_rfc(rfc)
         if user:
             stored_password = user[4]
@@ -139,15 +143,18 @@ def agregar_medico():
     if 'user_id' not in session or session.get('rol') != 'admin':
         flash('No tienes permisos para agregar médicos.', 'error')
         return redirect(url_for('main.dashboard'))
-    nombre = request.form.get('nombre')
-    apellido_paterno = request.form.get('apellido_paterno')
-    apellido_materno = request.form.get('apellido_materno')
-    cedula = request.form.get('cedula')
-    correo = request.form.get('correo')
-    contrasena = request.form.get('contrasena')
-    verif_contrasena = request.form.get('verif_contrasena')
-    rfc = request.form.get('rfc')
-    rol = request.form.get('rol')
+    nombre = request.form.get('nombre', '').strip()
+    apellido_paterno = request.form.get('apellido_paterno', '').strip()
+    apellido_materno = request.form.get('apellido_materno', '').strip()
+    cedula = request.form.get('cedula', '').strip()
+    correo = request.form.get('correo', '').strip()
+    contrasena = request.form.get('contrasena', '').strip()
+    verif_contrasena = request.form.get('verif_contrasena', '').strip()
+    rfc = request.form.get('rfc', '').strip()
+    rol = request.form.get('rol', '').strip()
+    if not all([nombre, apellido_paterno, apellido_materno, cedula, correo, contrasena, verif_contrasena, rfc, rol]):
+        flash('Es necesario llenar todos los campos en rojo', 'error')
+        return redirect(url_for('main.dashboard'))
     if contrasena != verif_contrasena:
         flash('Las contraseñas no coinciden.', 'error')
         return redirect(url_for('main.dashboard'))
@@ -165,16 +172,24 @@ def agregar_paciente():
         flash('Debes iniciar sesión para registrar pacientes.', 'error')
         return redirect(url_for('main.login'))
     nombre_medico = request.form.get('medico_nombre')
-    nombre = request.form.get('nombre')
-    apellido_paterno = request.form.get('apellido_paterno')
-    apellido_materno = request.form.get('apellido_materno')
-    fecha_nacimiento = request.form.get('fecha_nacimiento')
+    nombre = request.form.get('nombre', '').strip()
+    apellido_paterno = request.form.get('apellido_paterno', '').strip()
+    apellido_materno = request.form.get('apellido_materno', '').strip()
+    fecha_nacimiento = request.form.get('fecha_nacimiento', '').strip()
     alergias = request.form.get('alergias')
     antecedentes = request.form.get('antecedentes_familiares')
     enfermedades = request.form.get('enfermedades_cronicas')
     id_medico = session.get('user_id')
-    if not nombre or not apellido_paterno or not fecha_nacimiento:
-        flash('Faltan campos obligatorios.', 'error')
+    if not all([nombre, apellido_paterno, apellido_materno, fecha_nacimiento]):
+        flash('Es necesario llenar todos los campos en rojo', 'error')
+        return redirect(url_for('main.dashboard'))
+    try:
+        fecha_nac_dt = datetime.strptime(fecha_nacimiento, '%Y-%m-%d').date()
+        if fecha_nac_dt >= date.today():
+            flash('No se pueden registrar pacientes recién nacidos.', 'error')
+            return redirect(url_for('main.dashboard'))
+    except ValueError:
+        flash('Fecha de nacimiento inválida.', 'error')
         return redirect(url_for('main.dashboard'))
     try:
         insert_paciente(
